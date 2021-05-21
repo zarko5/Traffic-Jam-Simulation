@@ -44,20 +44,27 @@ RoadArr=[[1,1,1,0,1,1,1,0,1,0,1,1,0,1,1,1],
         [1,1,1,0,1,2,0,0,2,0,0,0,2,0,0,0],
         [0,0,0,2,0,0,0,0,2,0,0,0,2,0,0,0]]
 
-RoadObj=[5[5]]
-for i in range(0,10):
-    for y in range(0,5):
-        if RoadArr[i][y]==1:
+RoadObj=[[1,1,1,0,1,1,1,0,1,0,1,1,0,1,1,1],
+        [0,0,0,2,0,0,0,2,0,2,0,0,2,0,0,0],
+        [0,0,0,2,0,0,0,0,1,0,0,0,2,0,0,0],
+        [1,1,1,0,1,0,0,2,0,0,0,0,2,0,0,0],
+        [0,0,0,2,0,2,0,2,0,0,0,0,2,0,0,0],
+        [0,0,0,2,0,0,1,1,1,1,1,1,0,1,1,1],
+        [1,1,1,0,1,2,0,0,2,0,0,0,2,0,0,0],
+        [0,0,0,2,0,0,0,0,2,0,0,0,2,0,0,0]]
+for i in range(0,7):
+    for y in range(0,15):
+        if RoadArr[i][y]==2 :
             RoadObj[i][y]=Road()
-            RoadObj[i][y].x=i*100
-            RoadObj[i][y].y=y*100
+            RoadObj[i][y].y=i*100 + 20 
+            RoadObj[i][y].x=y*100 + 20
        
-        if RoadArr[i][y]==2:
+        elif RoadArr[i][y]==1:
             RoadObj[i][y]=Road()
-            RoadObj[i][y].x=i*100
-            RoadObj[i][y].y=y*100
-            RoadObj[i][y].image=pg.transform.rotate(RoadObj[i][y],90)
-
+            RoadObj[i][y].y=i*100 + 20
+            RoadObj[i][y].x=y*100 + 20
+            RoadObj[i][y].image=pg.transform.rotate(RoadObj[i][y].image,90)
+        else :RoadObj[i][y] = Road()
 car = Car()
 car2 = Car()
 car.x=0
@@ -75,8 +82,8 @@ road2.y=50
 Run=True
 while Run:
     surface.fill((0,0,0))
-    for i in range(0,15):
-        for y in range(0,7):
+    for i in range(0,7):
+        for y in range(0,15):
             RoadObj[i][y].draw(surface)
     car.draw(surface)
     car2.draw(surface)
