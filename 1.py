@@ -1,3 +1,4 @@
+from numpy.lib.shape_base import _column_stack_dispatcher
 import pygame as pg
 from pygame.sndarray import array
 from pygame.time import delay
@@ -43,11 +44,20 @@ RoadArr=[[1,1,1,0,1,1,1,0,1,0,1,1,0,1,1,1],
         [1,1,1,0,1,2,0,0,2,0,0,0,2,0,0,0],
         [0,0,0,2,0,0,0,0,2,0,0,0,2,0,0,0]]
 
-RoadObj=[[]]
-for i in range(0,15):
-    for y in range(0,7):
-       if RoadArr[i][y]:
+RoadObj=[5[5]]
+for i in range(0,10):
+    for y in range(0,5):
+        if RoadArr[i][y]==1:
             RoadObj[i][y]=Road()
+            RoadObj[i][y].x=i*100
+            RoadObj[i][y].y=y*100
+       
+        if RoadArr[i][y]==2:
+            RoadObj[i][y]=Road()
+            RoadObj[i][y].x=i*100
+            RoadObj[i][y].y=y*100
+            RoadObj[i][y].image=pg.transform.rotate(RoadObj[i][y],90)
+
 car = Car()
 car2 = Car()
 car.x=0
@@ -65,8 +75,9 @@ road2.y=50
 Run=True
 while Run:
     surface.fill((0,0,0))
-    road.draw(surface)
-    road2.draw(surface)
+    for i in range(0,15):
+        for y in range(0,7):
+            RoadObj[i][y].draw(surface)
     car.draw(surface)
     car2.draw(surface)
     for i in range(0,6,2):
