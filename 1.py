@@ -32,17 +32,17 @@ semafor = array('I',[110,10,200,50,250,300,300,350])
 boje = ["Red","Red","Red","Red"]
 surface = pygamebg.open_window(1600,800 , "Traffic Jam Simulation")
 
-RoadArr=[[1,1,1,0,1,1,1,0,1,0,1,1,0,1,1,1],
+RoadArr=[[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
         [0,0,0,2,0,0,0,2,0,2,0,0,2,0,0,0],
-        [0,0,0,2,0,0,0,0,1,0,0,0,2,0,0,0],
-        [1,1,1,0,1,0,0,2,0,0,0,0,2,0,0,0],
+        [0,0,0,2,0,0,0,1,1,1,0,0,2,0,0,0],
+        [1,1,1,3,1,1,1,2,0,0,0,0,2,0,0,0],
         [0,0,0,2,0,2,0,2,0,0,0,0,2,0,0,0],
-        [0,0,0,2,0,0,1,1,1,1,1,1,0,1,1,1],
-        [1,1,1,0,1,2,0,0,2,0,0,0,2,0,0,0],
+        [0,0,0,2,0,1,1,1,1,1,1,1,1,1,1,1],
+        [1,1,1,1,1,2,0,0,2,0,0,0,2,0,0,0],
         [0,0,0,2,0,0,0,0,2,0,0,0,2,0,0,0]]
 RoadObj  = np.zeros(shape=(8,16), dtype=Road)
 
-CarArr= np.zeros(shape=(8,16), dtype=Car)
+CarArr= np.zeros(shape=(9,17), dtype=Car)
 
 for i in range(0,7):
     for y in range(0,15):
@@ -59,7 +59,11 @@ for i in range(0,7):
             CarArr[i][y] = Car()
             CarArr[i][y].x=i*100
             CarArr[i][y].y=y*100+25
-
+        elif RoadArr[i][y] == 3:
+            RoadObj[i][y]=Road()
+            RoadObj[i][y].y=i*100 
+            RoadObj[i][y].x=y*100 
+            
         
 #car.y=15
 #car2.x=20
@@ -72,14 +76,24 @@ while Run:
         for y in range(0,15):
             if RoadArr[i][y]!=0 :
                 RoadObj[i][y].draw(surface)
-                if RoadArr[i][y]==1:CarArr[i][y].draw(surface)
+                if RoadArr[i][y]==3:
+                    RoadObj[i][y].image=pg.transform.rotate(RoadObj[i][y].image,90)
+                    RoadObj[i][y].draw(surface)
+                    #RoadObj[i][y].image=pg.transform.rotate(RoadObj[i][y].image,90)
+
+                if RoadArr[i][y]==1:
+                    CarArr[i][y].draw(surface)
+                    if CarArr[i][y].x < 1600 and CarArr[i][y].y < 800 and surface.get_at((CarArr[i][y].x,CarArr[i][y].y)) != pg.Color("Red") :
+                        CarArr[i][y].x=CarArr[i][y].x+1
+                    else : 
+                        CarArr[i][y].x=0
+                        #CarArr[i][y].y=    
     #car.draw(surface)
     #car2.draw(surface)
     for i in range(0,6,2):
         pg.draw.circle(surface, pg.Color(boje[i//2]), (semafor[i],semafor[i+1]), 10)
     delay(10)
-    if surface.get_at((CarArr[0][0].x+50,CarArr[0][0].y)) != pg.Color("Red") :
-        CarArr[0][0].x=CarArr[0][0].x+1
+    
     #else :car.x=car.
 
    # CarArr[].x=car2.x+1
