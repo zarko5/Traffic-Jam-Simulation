@@ -1,12 +1,13 @@
 import pygame as pg
+import pygame.mixer
 import pygamebg
 from array import *
 import numpy as np
 import random
 
-
+#CarDirection 0 je levo,1 je gore , 2 je dole
 br_semafora=10
-br_car=15
+br_car=10
 
 class Car(object):  
     def __init__(self):
@@ -41,6 +42,7 @@ RoadArr=[[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
 RoadObj  = np.zeros(shape=(8,16), dtype=Road)
 CarLocation = np.zeros(shape=(20,20),dtype=int)
 CarArr= np.zeros(shape=(br_car+1), dtype=Car)
+CarDirection = np.zeros(shape=(br_car+1),dtype=int)
 auto_index=0
 for i in range(0,7):
     for y in range(0,15):
@@ -55,6 +57,7 @@ for i in range(0,7):
             RoadObj[i][y].image=pg.transform.rotate(RoadObj[i][y].image,90)
             if round(random.random()) and auto_index<=br_car:
                 CarLocation[i][y]=1
+                CarDirection[auto_index]=0
                 CarArr[auto_index] = Car()
                 CarArr[auto_index].x=y*100+100
                 CarArr[auto_index].y=i*100+130
@@ -62,6 +65,9 @@ for i in range(0,7):
 boja=0
 Run=True
 ciklus=0
+pg.init()
+pg.mixer.music.load("music1.ogg")
+pg.mixer.music.play(-1)
 while Run:
     ciklus+=1
     surface.fill((0,0,255))
@@ -80,20 +86,34 @@ while Run:
             CarArr[aindex].draw(surface)
             if CarArr[aindex].x < 1600 and CarArr[aindex].y < 800 :
                 CarLocation[CarArr[aindex].x//100][CarArr[aindex].y//100]=1
-                if  surface.get_at((CarArr[aindex].x+75,CarArr[aindex].y)) != pg.Color("Red"):
+                if  CarDirection[aindex]==0 and surface.get_at((CarArr[aindex].x+75,CarArr[aindex].y)) != pg.Color("Red") and surface.get_at((CarArr[aindex].x+75,CarArr[aindex].y)) != pg.Color("Blue"):
                     if not CarLocation[(CarArr[aindex].x)//100+1][(CarArr[aindex].y)//100] and CarArr[aindex].x//100+1<16:#
                         CarArr[aindex].x=CarArr[aindex].x+1
                         CarLocation[CarArr[aindex].x//100][CarArr[aindex].y//100]=1
                         #provera da li je polje ispred zauzeto sa autom //100+1 ako nije kreni napred , markiraj svoje polje kao zauzeto ,ako si izaso iz polja markiraj prethodno 
                         # polje kao zauzeto  
-                        if abs(CarArr[aindex].x//100 - (CarArr[aindex].x-50)//100) == 1 :#and CarArr[aindex].x < 1500 and CarArr[aindex].y <700:
+                        if abs(CarArr[aindex].x//100 - (CarArr[aindex].x-1)//100) == 1 :
                             CarLocation[(CarArr[aindex].x)//100-1][CarArr[aindex].y//100]=0
                     elif CarArr[aindex].x//100+1>15 and CarLocation[1][(CarArr[aindex].y)//100]==0:
-                        print(CarLocation[1][CarArr[aindex].y//100])
+               #         print(CarLocation[1][CarArr[aindex].y//100])
                         CarLocation[(CarArr[aindex].x)//100][CarArr[aindex].y//100]=0
                         CarArr[aindex].x=100#Teleportacija, prvo ispraznimo polje pa se prebacimo,ako je zauzeto
-                  #  elif  CarLocation[1][(CarArr[aindex].y)//100]==1 and CarArr[aindex].x//100>15:
-                   #         CarLocation[CarArr[aindex].x//100][CarArr[aindex].y//100]=1
+#                    else :
+                    if surface.get_at((CarArr[aindex].x+75,CarArr[aindex].y)) == pg.Color("Blue"):
+                        if surface.get_at((CarArr[aindex].x,CarArr[aindex].y+75)) == pg.Color("Blue") and surface.get_at((CarArr[aindex].x,CarArr[aindex].y-75)) == pg.Color("Blue"):#RoadArr[CarArr[aindex].x//100][CarArr[aindex].y//100-1]!=0 and RoadArr[CarArr[aindex].x//100][CarArr[aindex].y//100+1]!=0:
+                            CarDirection[aindex]=random.randint(1,2)
+                            if CarDirection[aindex]==1:
+                                angle=90
+                            else :
+                                angle=270
+                            CarArr[aindex].image=pg.transform.rotate(CarArr[aindex].image,angle)
+
+                        elif surface.get_at((CarArr[aindex].x,CarArr[aindex].y+75)) == pg.Color("Blue") :
+                            CarDirection[aindex]=2
+                            CarArr[aindex].image=pg.transform.rotate(CarArr[aindex].image,270)
+                        else :
+                            CarDirection[aindex]=1
+                            CarArr[aindex].image=pg.transform.rotate(CarArr[aindex].image,90)
 
     if ciklus>500:
         ciklus=0
