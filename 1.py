@@ -1,7 +1,7 @@
-from numpy.lib.shape_base import _column_stack_dispatcher
+#from numpy.lib.shape_base import _column_stack_dispatcher
 import pygame as pg
-from pygame.sndarray import array
-from pygame.time import delay
+#from pygame.sndarray import array
+#from pygame.time import delay
 import pygamebg
 from array import *
 import numpy as np
@@ -44,7 +44,7 @@ RoadArr=[[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
         [0,0,0,2,0,0,0,0,2,0,0,0,2,0,0,0]]
 RoadObj  = np.zeros(shape=(8,16), dtype=Road)
 CarLocation = np.zeros(shape=(8,16),dtype=int)
-CarArr= np.zeros(shape=(9,17), dtype=Car)
+CarArr= np.zeros(shape=(8,16), dtype=Car)
 
 for i in range(0,7):
     for y in range(0,15):
@@ -52,9 +52,6 @@ for i in range(0,7):
             RoadObj[i][y]=Road()
             RoadObj[i][y].y=i*100+100 
             RoadObj[i][y].x=y*100+100
-            #CarArr[i][y] = Car()
-            #CarArr[i][y].x=i*100
-            #CarArr[i][y].y=y*100+25
         elif RoadArr[i][y]==1:
             RoadObj[i][y]=Road()
             RoadObj[i][y].y=i*100 +100
@@ -65,15 +62,6 @@ for i in range(0,7):
                 CarArr[i][y] = Car()
                 CarArr[i][y].x=y*100+100
                 CarArr[i][y].y=i*100+130
-       # elif RoadArr[i][y] == 3:
-        #    RoadObj[i][y]=Road()
-         #   RoadObj[i][y].y=i*100
-          #  RoadObj[i][y].x=y*100 
-            
-        
-#car.y=15
-#car2.x=20
-#car2.y=65
 
 Run=True
 while Run:
@@ -82,9 +70,7 @@ while Run:
         for y in range(0,15):
             if RoadArr[i][y]!=0 :
                 RoadObj[i][y].draw(surface)
-               # if RoadArr[i][y]==3:
-                #    RoadObj[i][y].draw(surface)
-                    #RoadObj[i][y].image=pg.transform.rotate(RoadObj[i][y].image,90)
+
 
     for i in range(0,5,2):
         pg.draw.circle(surface, pg.Color(boje[i//2]), (semafor[i],semafor[i+1]), 20)
@@ -95,17 +81,19 @@ while Run:
                 if CarArr[i][y]!=0:
                     CarArr[i][y].draw(surface)
                     if CarArr[i][y].x < 1600 and CarArr[i][y].y < 800 :
-                        if  surface.get_at((CarArr[i][y].x+75,CarArr[i][y].y)) != pg.Color("Red") :#and surface.get_at((CarArr[i][y].x+35,CarArr[i][y].y)) != pg.Color("Red") :
+                        if  surface.get_at((CarArr[i][y].x+75,CarArr[i][y].y)) != pg.Color("Red") and not CarLocation[i+1][y]:#and surface.get_at((CarArr[i][y].x+35,CarArr[i][y].y)) != pg.Color("Red") :
                             CarArr[i][y].x=CarArr[i][y].x+1
-                            temp=CarArr[i][y].x//100+1
-                           # CarLocation[temp][1]==1
+                        if CarArr[i][y].x%100==0:
+                            print("")
+                           # if not CarLocation[CarArr[i][y].y//100][CarArr[i][y].x//100]:
+                            #    CarLocation[CarArr[i][y].y//100][CarArr[i][y].x//100]=1
+                             #   CarLocation[CarArr[i][y].y//100-1][CarArr[i][y].x//100-1]=0
+                              #  for x in CarLocation:
+                               #     print(x)
+                               # print("\n") 
                     else :
                           CarArr[i][y].x=100
 
-                    #elif CarArr[i][y].x == 1 and CarArr[i][y].y == 699: 
-                     #   CarArr[i][y].x=100
-                   # else   :
-                    #      CarArr[i][y].x=100
     pg.display.update()
     for event in pg.event.get():
            if event.type == pg.KEYDOWN:
