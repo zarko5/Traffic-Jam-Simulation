@@ -59,7 +59,7 @@ for i in range(0,7):
                 CarArr[auto_index].x=y*100+100
                 CarArr[auto_index].y=i*100+130
                 auto_index+=1
-
+boja=0
 Run=True
 ciklus=0
 while Run:
@@ -71,7 +71,7 @@ while Run:
                 RoadObj[i][y].draw(surface)
 
 
-    for i in range(0,5,2):
+    for i in range(0,4,2):
         pg.draw.circle(surface, pg.Color(boje[i//2]), (semafor[i],semafor[i+1]), 20)
 
 
@@ -79,15 +79,30 @@ while Run:
         if CarArr[aindex]!=0:
             CarArr[aindex].draw(surface)
             if CarArr[aindex].x < 1600 and CarArr[aindex].y < 800 :
+                CarLocation[CarArr[aindex].x//100][CarArr[aindex].y//100]=1
                 if  surface.get_at((CarArr[aindex].x+75,CarArr[aindex].y)) != pg.Color("Red"):
-                    if not CarLocation[(CarArr[aindex].x)//100+1][(CarArr[aindex].y)//100]:#
+                    if not CarLocation[(CarArr[aindex].x)//100+1][(CarArr[aindex].y)//100] and CarArr[aindex].x//100+1<16:#
                         CarArr[aindex].x=CarArr[aindex].x+1
                         CarLocation[CarArr[aindex].x//100][CarArr[aindex].y//100]=1
+                        #provera da li je polje ispred zauzeto sa autom //100+1 ako nije kreni napred , markiraj svoje polje kao zauzeto ,ako si izaso iz polja markiraj prethodno 
+                        # polje kao zauzeto  
+                        if abs(CarArr[aindex].x//100 - (CarArr[aindex].x-50)//100) == 1 :#and CarArr[aindex].x < 1500 and CarArr[aindex].y <700:
+                            CarLocation[(CarArr[aindex].x)//100-1][CarArr[aindex].y//100]=0
+                    elif CarArr[aindex].x//100+1>15 and CarLocation[1][(CarArr[aindex].y)//100]==0:
+                        print(CarLocation[1][CarArr[aindex].y//100])
+                        CarLocation[(CarArr[aindex].x)//100][CarArr[aindex].y//100]=0
+                        CarArr[aindex].x=100#Teleportacija, prvo ispraznimo polje pa se prebacimo,ako je zauzeto
+                  #  elif  CarLocation[1][(CarArr[aindex].y)//100]==1 and CarArr[aindex].x//100>15:
+                   #         CarLocation[CarArr[aindex].x//100][CarArr[aindex].y//100]=1
 
-                        #if CarArr[aindex].x//100 - (CarArr[aindex].x-10)//100 > 1:
-                         #   CarLocation[(CarArr[aindex].x-45)//100][CarArr[aindex].y//100]=0
-                        
-
+    if ciklus>500:
+        ciklus=0
+        if boja==0:
+            boje[0]=pg.Color("Green")
+            boja=1
+        else :
+            boje[0]=pg.Color("Red")
+            boja=0 
                     #else :
                      #   print("F")
                        # if CarArr[auto_index].x%100==0:
@@ -97,12 +112,12 @@ while Run:
                       #CarLocation[(CarArr[aindex].x-1)]
                              #   CarLocation[CarArr[aindex].y//100-1][CarArr[aindex].x//100-1]=0
                               
-            else :                  
-                  CarArr[aindex].x=100
-    for x in CarLocation:
-      print(x)
-      print("\n")
+            #else :                  
+                  #if not CarLocation[1][(CarArr[aindex].y)//100]:
 
+
+                  #    if abs(CarArr[aindex].x//10 - (CarArr[aindex].x-1)//100) == 1 and CarArr[aindex].x >= 1500 and CarArr[aindex].y >= 700:
+                      #Proverava da li na prvoj tacki ima automobila
     pg.display.update()
     for event in pg.event.get():
            if event.type == pg.KEYDOWN:
