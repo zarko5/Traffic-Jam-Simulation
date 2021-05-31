@@ -1,15 +1,23 @@
 import pygame as pg
-import pygame.mixer
 import pygamebg
-from array import *
 import numpy as np
+from array import *
 import random
+
+
+# muzika, nakon inita
+# import pygame.mixer
+# pg.init()
+# pg.mixer.music.load("music1.ogg")
+# pg.mixer.music.play(-1)
+
+
 
 #CarDirection 0 je levo,1 je gore , 2 je dole
 br_semafora=10
 br_car=10
 
-class Car(object):  
+class Car(object):#klasa za automobile  
     def __init__(self):
         self.image = pg.image.load("./car.png").convert_alpha()
         self.x = 0
@@ -18,7 +26,7 @@ class Car(object):
     def draw(self, surface):
         surface.blit(self.image, (self.x, self.y))
 
-class Road(object):     
+class Road(object):#klasa za puteve     
     def __init__(self):
         self.image = pg.image.load("./road.png").convert_alpha()
         self.x = 0
@@ -27,10 +35,16 @@ class Road(object):
     def draw(self, surface):
         surface.blit(self.image, (self.x, self.y))
 
+def osvezi_lokacije():#Prolaz kroz sva polja CarLocation i proverava da li ima automobila na njima, mozda bi mogao i da se merguje sa CarDirection
+    #mzd da zerouje arr na pocetku i prolazi kroz sve aute, ima x i y , podeli ih sa 100?? i dobije indexe???, npr auto 1 na lokaciji
+    print("d")
+
+
 semafor = array('I',[450,140,450,440,250,300,300,350])
 boje = ["Red","Red","Red","Red"]
 surface = pygamebg.open_window(1700,900 , "Traffic Jam Simulation")
 
+##const matrix puteva koji postoje,moze kasnije i nasumicni
 RoadArr=[[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
         [0,0,0,2,0,0,0,2,0,2,0,0,2,0,0,0],
         [0,0,0,2,0,0,0,1,1,1,0,0,2,0,0,0],
@@ -39,11 +53,15 @@ RoadArr=[[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
         [0,0,0,2,0,1,1,1,1,1,1,1,1,1,1,1],
         [1,1,1,1,1,2,0,0,2,0,0,0,2,0,0,0],
         [0,0,0,2,0,0,0,0,2,0,0,0,2,0,0,0]]
-RoadObj  = np.zeros(shape=(8,16), dtype=Road)
-CarLocation = np.zeros(shape=(20,20),dtype=int)
-CarArr= np.zeros(shape=(br_car+1), dtype=Car)
-CarDirection = np.zeros(shape=(br_car+1),dtype=int)
-auto_index=0
+RoadObj  = np.zeros(shape=(8,16), dtype=Road) #Objekti puteva
+
+CarLocation = np.zeros(shape=(20,20),dtype=int)#Lokacije auta u matrici
+
+CarArr= np.zeros(shape=(br_car+1), dtype=Car)#Objekti automobila
+
+CarDirection = np.zeros(shape=(br_car+1),dtype=int)#smer kretanja automobila
+
+auto_index=0#ovo treba promenu kako bi uvek bio ispunjen broj automobila br_car, samo se generisu na random lokacijama,
 for i in range(0,7):
     for y in range(0,15):
         if RoadArr[i][y]==2 :
@@ -65,9 +83,6 @@ for i in range(0,7):
 boja=0
 Run=True
 ciklus=0
-pg.init()
-pg.mixer.music.load("music1.ogg")
-pg.mixer.music.play(-1)
 while Run:
     ciklus+=1
     surface.fill((0,0,255))
@@ -123,22 +138,9 @@ while Run:
         else :
             boje[0]=pg.Color("Red")
             boja=0 
-                    #else :
-                     #   print("F")
-                       # if CarArr[auto_index].x%100==0:
-                        #    print("")
-                    #else:
-                      #CarLocation[CarArr[aindex].x//100][CarArr[aindex].y//100]=1
-                      #CarLocation[(CarArr[aindex].x-1)]
-                             #   CarLocation[CarArr[aindex].y//100-1][CarArr[aindex].x//100-1]=0
-                              
-            #else :                  
-                  #if not CarLocation[1][(CarArr[aindex].y)//100]:
-
-
-                  #    if abs(CarArr[aindex].x//10 - (CarArr[aindex].x-1)//100) == 1 and CarArr[aindex].x >= 1500 and CarArr[aindex].y >= 700:
-                      #Proverava da li na prvoj tacki ima automobila
     pg.display.update()
+
+    # gasenje programa na ESC
     for event in pg.event.get():
            if event.type == pg.KEYDOWN:
                if event.key == pg.K_ESCAPE:
