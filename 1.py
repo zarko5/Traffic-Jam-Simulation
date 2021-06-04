@@ -13,8 +13,9 @@ import random
 
 # CarDirection 0 je desno,1 je gore , 2 je dole
 br_semafora = 10
-br_car = 10
+br_car = 20
 
+random.seed(23617282344)
 
 class Car(object):  # klasa za automobile
     def __init__(self):
@@ -27,9 +28,10 @@ class Car(object):  # klasa za automobile
         surface.blit(self.image, (self.x, self.y))
 
     def rotiraj(self,smer):
+        #ovaj deo moze i da ima or da je smer = int da bi se poklapao sa CarDirection
         self.image = pg.image.load("./car.png").convert_alpha()
-        if (smer == "gore"):
-            self.image = pg.transform.rotate(self.image,0) # U sustini ne radi nista sa slikom posto se uspravna slika ucitava pre if-a 
+        if (smer == "gore" ):#or smer == 0):
+            self.image = pg.transform.rotate(self.image,0) # U sustini ne radi nista sa slikom posto se uspravna slika ucitava pre if-a
         elif (smer == "dole"):
             self.image = pg.transform.rotate(self.image,180)
         elif (smer == "levo"):
@@ -115,20 +117,16 @@ while Run:
             if RoadArr[i][y] != 0:
                 RoadObj[i][y].draw(surface)
 
-    for i in range(0, 4, 2):
+    for i in range(0, 4, 2):#Logika za semafore bi trebala da bude ista kao i za CarLocation, odnosno semafor simulira auto kad je crven i slobodno je kad je zelen
         pg.draw.circle(
             surface, pg.Color(boje[i // 2]), (semafor[i], semafor[i + 1]), 20
         )
     
-    #CarArr[0].rotiraj("desno")
+    #CarArr[0].rotiraj(0)
     
     osvezi_lokacije(auto_index,CarLocation)
     for aindex in range(0, auto_index ):
         CarArr[aindex].draw(surface)
-        # print("PRVI")
-        # for i in CarLocation:
-        #     print(i)
-        # CarLocation[CarArr[aindex].y // 100][CarArr[aindex].x // 100] = 1
         if CarArr[aindex].x < 1600 and CarArr[aindex].y < 800:
             if (
                 CarDirection[aindex] == 0
@@ -143,9 +141,9 @@ while Run:
                     CarArr[aindex].x // 100 + 1 > 15
                     and CarLocation[CarArr[aindex].y//100][1] == 0
                 ):
-                    CarArr[aindex].x = 100  # Teleportacija, prvo ispraznimo polje pa se prebacimo,ako je zauzeto
+                    CarArr[aindex].x = 100  # Teleportacija na pocetak 
                 #                    
-                    """ if (
+                    """ if (Stvari nadalje su nepotrebne posto ce gore ici drugi sistem rotacije
                         abs(CarArr[aindex].x // 100 - (CarArr[aindex].x - 1) // 100)
                         == 1
                     ):
@@ -184,14 +182,17 @@ while Run:
                         CarArr[aindex].image = pg.transform.rotate(
                             CarArr[aindex].image, 90
                         )"""
-
-    if ciklus > 500:
+    
+    if ciklus > 70 and random.randint(0,100)>99:
+        random.seed(round(random.random()*10000))        
         ciklus = 0
         if boja == 0:
             boje[0] = pg.Color("Green")
+            boje[1] = pg.Color("Green")
             boja = 1
         else:
             boje[0] = pg.Color("Red")
+            boje[1] = pg.Color("Red ")
             boja = 0
     pg.display.update()
 
