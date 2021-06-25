@@ -1,21 +1,21 @@
+#!/bin/python
 import pygame as pg
-import pygamebg
 import numpy as np
 import random
 
-
-# muzika, nakon inita
 # import pygame.mixer
 # pg.init()
 # pg.mixer.music.load("music1.ogg")
 # pg.mixer.music.play(-1)
+
+sirina = 1700
+visina = 900
 
 
 # CarDirection 0 je desno,1 je gore , 2 je dole
 br_semafora = 10
 br_car = 20
 
-random.seed(23617282344)
 
 class Car(object):  # klasa za automobile
     def __init__(self):
@@ -41,32 +41,46 @@ class Car(object):  # klasa za automobile
 
 class Road(object):  # klasa za puteve
     def __init__(self):
-        self.image = pg.image.load("./road.png").convert_alpha()
+        self.image = pg.image.load("./put.png").convert_alpha()
         self.x = 0
         self.y = 0
-        # self.image = pg.transform.rotate(self.image,270)
-
+        
     def draw(self, surface):
         surface.blit(self.image, (self.x, self.y))
 
+class Semafor(object):
+    def __init__(self):
+        self.x = 0
+        self.y = 0
+    
+    def draw(self,surface,boja):
+         pg.draw.circle(surface, pg.Color(boja), (self.x, self.y), 20)
 
-def osvezi_lokacije(aindx,CarLoc):  # Prolaz kroz sva polja CarLocation i proverava da li ima automobila na njima, mozda bi mogao i da se merguje sa CarDirectio
-    # CarLoc = np.zeros(shape=(9,18),dtype=int)
+
+def osvezi_lokacije(aindx,CarLoc):  # Prolazi kroz sve aute i markira polja na kojima se nalaze kao zauzeta 
     for i in range(0,8):
         for y in range(0,17):
             CarLoc[i][y]=0
     for index in range(0,aindx):
-        #CarLocation[CarArr[aindex].y // 100][CarArr[aindex].x // 100] = 1
         CarLoc[CarArr[index].y // 100][CarArr[index].x // 100] = 1
+#    for index in br_semafora:#Menjamo polje na jedan samo ako je boja crvena
 
 
 
-
-semafor = np.array([450, 140, 450, 440, 250, 300, 300, 350])
+semafor = np.array([450, 140, 450, 440, 250, 300, 300, 350])#ovaj  array ce postati niz klasa nakon ubacivanja raskrsnica
 boje = ["Red", "Red", "Red", "Red"]
-surface = pygamebg.open_window(1700, 900, "Traffic Jam Simulation")
+#boje = []#Prazna lista + append kad se dodaje novi semafor, nakon sto se ubace raskrsnice
+
+pg.init()
+surface = pg.display.set_mode((sirina,visina))
+pg.display.set_caption("Traffic Jam Simulation")
+
 
 ##const matrix puteva koji postoje,mozda kasnije i nasumicni
+# Horizontalan put - 1
+# Vertikalan put - 2
+# Raskrsnica - 3
+# T_put - 4
 RoadArr = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     [0, 0, 0, 2, 0, 0, 0, 2, 0, 2, 0, 0, 2, 0, 0, 0],
@@ -77,6 +91,8 @@ RoadArr = [
     [1, 1, 1, 1, 1, 2, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0],
     [0, 0, 0, 2, 0, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0],
 ]
+
+##
 RoadObj = np.zeros(shape=(8, 16), dtype=Road)  # Objekti puteva
 
 CarLocation = np.zeros(shape=(8, 17), dtype=int)  # Lokacije auta u matrici
@@ -84,6 +100,8 @@ CarLocation = np.zeros(shape=(8, 17), dtype=int)  # Lokacije auta u matrici
 CarArr = np.zeros(shape=(br_car + 1), dtype=Car)  # Objekti automobila
 
 CarDirection = np.zeros(shape=(br_car + 1), dtype=int)  # smer kretanja automobila
+
+semafori = np.zeros(shape=(8,17),dtype=Semafor)
 
 auto_index = 0  # ovo treba promenu kako bi uvek bio ispunjen broj automobila br_car, samo se generisu na random lokacijama,
 for i in range(0, 7):
@@ -109,6 +127,7 @@ for i in range(0, 7):
 boja = 0
 Run = True
 ciklus = 0
+random.seed(23617282344)#PRNG eksperiment
 while Run:
     ciklus += 1
     surface.fill((0, 0, 255))
@@ -117,11 +136,12 @@ while Run:
             if RoadArr[i][y] != 0:
                 RoadObj[i][y].draw(surface)
 
-    for i in range(0, 4, 2):#Logika za semafore bi trebala da bude ista kao i za CarLocation, odnosno semafor simulira auto kad je crven i slobodno je kad je zelen
-        pg.draw.circle(
-            surface, pg.Color(boje[i // 2]), (semafor[i], semafor[i + 1]), 20
-        )
-    
+    for i in range(0, 4, 2):# Stari nacin iscrtavanja semafora, bice obrisan nakon ubacivanja raskrsnica 
+         pg.draw.circle(surface, pg.Color(boje[i // 2]), (semafor[i], semafor[i + 1]), 20)
+    ##
+    #Novi semafori
+    ##
+
     #CarArr[0].rotiraj(0)
     
     osvezi_lokacije(auto_index,CarLocation)
@@ -142,7 +162,7 @@ while Run:
                     and CarLocation[CarArr[aindex].y//100][1] == 0
                 ):
                     CarArr[aindex].x = 100  # Teleportacija na pocetak 
-                #                    
+
                     """ if (Stvari nadalje su nepotrebne posto ce gore ici drugi sistem rotacije
                         abs(CarArr[aindex].x // 100 - (CarArr[aindex].x - 1) // 100)
                         == 1
@@ -182,6 +202,7 @@ while Run:
                         CarArr[aindex].image = pg.transform.rotate(
                             CarArr[aindex].image, 90
                         )"""
+                        # 
     
     if ciklus > 70 and random.randint(0,100)>99:
         random.seed(round(random.random()*10000))        
