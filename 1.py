@@ -40,13 +40,38 @@ class Car(object):  # klasa za automobile
             self.image = pg.transform.rotate(self.image,90)
 
 class Road(object):  # klasa za puteve
-    def __init__(self):
-        self.image = pg.image.load("./put.png").convert_alpha()
+    def __init__(self,tip):
         self.x = 0
         self.y = 0
+        if(tip == "put" or tip == 1):
+            self.image = pg.image.load("./put.png").convert_alpha()
+            self.rotiraj("desno")
+        
+        elif(tip == "putv" or tip == 2):
+            self.image = pg.image.load("./put.png").convert_alpha()
+            self.rotiraj("gore")
+
+        elif(tip == "skretanje" or tip == 3):
+            self.image = pg.image.load("./skretanje.png").convert_alpha()
+        
+        elif(tip == "raskrsnica" or tip == 4):
+            self.image = pg.image.load("./raskrsnica.png").convert_alpha()
+        
+        elif(tip == "T_put" or tip == 5):
+            self.image = pg.image.load("./T_put.png").convert_alpha()
         
     def draw(self, surface):
         surface.blit(self.image, (self.x, self.y))
+
+    def rotiraj(self,smer):
+        if (smer == "gore" ):
+            self.image = pg.transform.rotate(self.image,0) 
+        elif (smer == "dole"):
+            self.image = pg.transform.rotate(self.image,180)
+        elif (smer == "levo"):
+            self.image = pg.transform.rotate(self.image,270)
+        elif (smer == "desno"):
+            self.image = pg.transform.rotate(self.image,90)
 
 class Semafor(object):
     def __init__(self):
@@ -79,15 +104,16 @@ pg.display.set_caption("Traffic Jam Simulation")
 ##const matrix puteva koji postoje,mozda kasnije i nasumicni
 # Horizontalan put - 1
 # Vertikalan put - 2
-# Raskrsnica - 3
-# T_put - 4
+# Skretanje - 3
+# Raskrsnica - 4
+# T_put - 5
 RoadArr = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     [0, 0, 0, 2, 0, 0, 0, 2, 0, 2, 0, 0, 2, 0, 0, 0],
-    [0, 0, 0, 2, 0, 0, 0, 1, 1, 1, 0, 0, 2, 0, 0, 0],
-    [1, 1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 2, 0, 0, 0],
+    [0, 0, 0, 2, 0, 0, 0, 2, 1, 3, 0, 0, 2, 0, 0, 0],
+    [1, 1, 1, 1, 1, 1, 1, 4, 0, 0, 0, 0, 2, 0, 0, 0],
     [0, 0, 0, 2, 0, 2, 0, 2, 0, 0, 0, 0, 2, 0, 0, 0],
-    [0, 0, 0, 2, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [0, 0, 0, 2, 0, 1, 1, 5, 1, 1, 1, 1, 1, 1, 1, 1],
     [1, 1, 1, 1, 1, 2, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0],
     [0, 0, 0, 2, 0, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0],
 ]
@@ -106,15 +132,11 @@ semafori = np.zeros(shape=(8,17),dtype=Semafor)
 auto_index = 0  # ovo treba promenu kako bi uvek bio ispunjen broj automobila br_car, samo se generisu na random lokacijama,
 for i in range(0, 7):
     for y in range(0, 15):
-        if RoadArr[i][y] == 2:
-            RoadObj[i][y] = Road()
+        if RoadArr[i][y] == 1:
+            RoadObj[i][y] = Road(1)
             RoadObj[i][y].y = i * 100 + 100
             RoadObj[i][y].x = y * 100 + 100
-        elif RoadArr[i][y] == 1:
-            RoadObj[i][y] = Road()
-            RoadObj[i][y].y = i * 100 + 100
-            RoadObj[i][y].x = y * 100 + 100
-            RoadObj[i][y].image = pg.transform.rotate(RoadObj[i][y].image, 90)
+            #RoadObj[i][y].image = pg.transform.rotate(RoadObj[i][y].image, 90)
             if round(random.random()) and auto_index <= br_car:
                 CarLocation[i][y] = 1
                 CarDirection[auto_index] = 0
@@ -122,6 +144,22 @@ for i in range(0, 7):
                 CarArr[auto_index].x = y * 100 + 100
                 CarArr[auto_index].y = i * 100 + 130
                 auto_index += 1
+        elif RoadArr[i][y] == 2: # Uspravan put
+            RoadObj[i][y] = Road(2)
+            RoadObj[i][y].y = i * 100 + 100
+            RoadObj[i][y].x = y * 100 + 100
+        elif RoadArr[i][y] == 3: # Skretanje 
+            RoadObj[i][y] = Road(3)
+            RoadObj[i][y].y = i * 100 + 100
+            RoadObj[i][y].x = y * 100 + 100
+        elif RoadArr[i][y] == 4: # Raskrsnica 
+            RoadObj[i][y] = Road(4)
+            RoadObj[i][y].y = i * 100 + 100
+            RoadObj[i][y].x = y * 100 + 100
+        elif RoadArr[i][y] == 5: # T_put
+            RoadObj[i][y] = Road(5) 
+            RoadObj[i][y].y = i * 100 + 100
+            RoadObj[i][y].x = y * 100 + 100
 
 
 boja = 0
