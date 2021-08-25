@@ -95,11 +95,14 @@ def osvezi_lokacije(aindx,CarLoc):  # Prolazi kroz sve aute i markira polja na k
     for index in range(0,aindx):
         CarLoc[CarArr[index].y // 100][CarArr[index].x // 100] = 1
 #    for index in br_semafora:#Menjamo polje na jedan samo ako je boja crvena plus semafor moze da se promeni samo ako je slobodno polje
-
-def obradi_raskrsnice(matrica,obradi_rotacije):
-    for i in range(0,7):
+lista_rotacija=[]
+def obradi_raskrsnice(matrica):
+    for i in range(0,8):
+        list2 = []
         for y in range(0,15):
-            if(matrica[i][y]>2): break
+            if(matrica[i][y]==0):
+                list2.append("gore")
+                continue
             if(i == 0):
                  up = 0
             else: 
@@ -116,36 +119,38 @@ def obradi_raskrsnice(matrica,obradi_rotacije):
                 right = 0
             else:
                 right = matrica[i][y+1]
-            if(up == 2 and down == 2 and left == 1 and right == 1):
+            #Raskrsnica
+            if(up >= 2 and down >= 2 and left >= 1 and right >= 1):
                 matrica[i][y] = 4
+                list2.append("gore")
+            #T_put
             elif(up >= 2 and left>0 and right>0):
                 matrica[i][y] = 5
+                list2.append("gore")
             elif(down >= 2 and left>0 and right>0):
                 matrica[i][y] = 5
-                if(obradi_rotacije):
-                    RoadObj[i][y].rotiraj("dole")
+                list2.append("dole")
             elif(up >= 2 and down >= 2 and left>0 ):
                 matrica[i][y] = 5
-                if(obradi_rotacije):
-                    RoadObj[i][y].rotiraj("levo")
+                list2.append("levo")
             elif(up >= 2 and down >= 2 and right>0):
                 matrica[i][y] = 5
-                if(obradi_rotacije):
-                    RoadObj[i][y].rotiraj("desno")
-            elif(up == 2 and left and matrica[i][y] == 1):
+                list2.append("desno")
+            # Skretanje       
+            elif(up >= 2 and left>0 ):
                 matrica[i][y] = 3
-            elif(up == 2 and right and matrica[i][y] == 1):
+                list2.append("gore")
+            elif(up >= 2 and right>0 ):
                 matrica[i][y] = 3
-                if(obradi_rotacije):
-                    RoadObj[i][y].rotiraj("desno")
-            elif(down == 2 and left and matrica[i][y] == 1):
+                list2.append("desno")
+            elif(down >= 2 and left>0 ):
                 matrica[i][y] = 3
-                if(obradi_rotacije):
-                    RoadObj[i][y].rotiraj("levo")
-            elif(down == 2 and right and matrica[i][y] == 1):
+                list2.append("levo")
+            elif(down >= 2 and right>0):
                 matrica[i][y] = 3
-                if(obradi_rotacije):
-                    RoadObj[i][y].rotiraj("dole")
+                list2.append("dole")
+            else: list2.append("gore")
+        lista_rotacija.append(list2)
             
 
 semafor = np.array([450, 140, 450, 440, 250, 300, 300, 350])#ovaj  array ce postati niz klasa nakon ubacivanja raskrsnica
@@ -173,8 +178,9 @@ RoadArr = [
     [1, 1, 1, 1, 1, 2, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0],
     [0, 0, 0, 2, 0, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0],
 ]
-obradi_raskrsnice(RoadArr,0)
-
+obradi_raskrsnice(RoadArr)
+for a in lista_rotacija:
+    print(a)
 ##
 RoadObj = np.zeros(shape=(8, 16), dtype=Road)  # Objekti puteva
 
@@ -189,11 +195,12 @@ semafori = np.zeros(shape=(8,17),dtype=Semafor)
 auto_index = 0  # ovo treba promenu kako bi uvek bio ispunjen broj automobila br_car, samo se generisu na random lokacijama,
 for i in range(0, 8):
     for y in range(0, 15):
+        rot = lista_rotacija[i][y]
         if RoadArr[i][y] == 1:
             RoadObj[i][y] = Road(1)
             RoadObj[i][y].y = i * 100 + 100
             RoadObj[i][y].x = y * 100 + 100
-            #RoadObj[i][y].image = pg.transform.rotate(RoadObj[i][y].image, 90)
+            RoadObj[i][y].rotiraj(rot)
             if round(random.random()) and auto_index <= br_car:
                 CarLocation[i][y] = 1
                 CarDirection[auto_index] = 0
@@ -205,19 +212,22 @@ for i in range(0, 8):
             RoadObj[i][y] = Road(2)
             RoadObj[i][y].y = i * 100 + 100
             RoadObj[i][y].x = y * 100 + 100
+            RoadObj[i][y].rotiraj(rot)
         elif RoadArr[i][y] == 3: # Skretanje 
             RoadObj[i][y] = Road(3)
             RoadObj[i][y].y = i * 100 + 100
             RoadObj[i][y].x = y * 100 + 100
+            RoadObj[i][y].rotiraj(rot)
         elif RoadArr[i][y] == 4: # Raskrsnica 
             RoadObj[i][y] = Road(4)
             RoadObj[i][y].y = i * 100 + 100
             RoadObj[i][y].x = y * 100 + 100
+            RoadObj[i][y].rotiraj(rot)
         elif RoadArr[i][y] == 5: # T_put
             RoadObj[i][y] = Road(5) 
             RoadObj[i][y].y = i * 100 + 100
             RoadObj[i][y].x = y * 100 + 100
-obradi_raskrsnice(RoadArr,1)
+            RoadObj[i][y].rotiraj(rot)
 
 boja = 0
 Run = True
