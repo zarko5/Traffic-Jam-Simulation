@@ -179,9 +179,7 @@ RoadArr = [
     [0, 0, 0, 2, 0, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0],
 ]
 obradi_raskrsnice(RoadArr)
-for a in lista_rotacija:
-    print(a)
-##
+
 RoadObj = np.zeros(shape=(8, 16), dtype=Road)  # Objekti puteva
 
 CarLocation = np.zeros(shape=(8, 17), dtype=int)  # Lokacije auta u matrici
@@ -247,7 +245,6 @@ while Run:
     #Novi semafori
     ##
 
-    #CarArr[0].rotiraj(0)
     
     osvezi_lokacije(auto_index,CarLocation)
     for aindex in range(0, auto_index ):
@@ -268,46 +265,6 @@ while Run:
                 ):
                     CarArr[aindex].x = 100  # Teleportacija na pocetak 
 
-                    """ if (Stvari nadalje su nepotrebne posto ce gore ici drugi sistem rotacije
-                        abs(CarArr[aindex].x // 100 - (CarArr[aindex].x - 1) // 100)
-                        == 1
-                    ):
-                        print("f")
-                    #    CarLocation[(CarArr[aindex].x) // 100 - 1][
-                        #CarArr[aindex].y // 100
-                        #] = 0
-                if surface.get_at(
-                    (CarArr[aindex].x + 75, CarArr[aindex].y)
-                ) == pg.Color("Blue"):
-                    if surface.get_at(
-                        (CarArr[aindex].x, CarArr[aindex].y + 75)
-                    ) == pg.Color("Blue") and surface.get_at(
-                        (CarArr[aindex].x, CarArr[aindex].y - 75)
-                    ) == pg.Color(
-                        "Blue"
-                    ): 
-                        CarDirection[aindex] = random.randint(1, 2)
-                        if CarDirection[aindex] == 1:
-                            angle = 90
-                        else:
-                            angle = 270
-                        CarArr[aindex].image = pg.transform.rotate(
-                            CarArr[aindex].image, angle
-                        )
-
-                    elif surface.get_at(
-                        (CarArr[aindex].x, CarArr[aindex].y + 75)
-                    ) == pg.Color("Blue"):
-                        CarDirection[aindex] = 2
-                        CarArr[aindex].image = pg.transform.rotate(
-                            CarArr[aindex].image, 270
-                        )
-                    else:
-                        CarDirection[aindex] = 1
-                        CarArr[aindex].image = pg.transform.rotate(
-                            CarArr[aindex].image, 90
-                        )"""
-                        # 
     
     if ciklus > 70 and random.randint(0,100)>99:
         random.seed(round(random.random()*10000))        
